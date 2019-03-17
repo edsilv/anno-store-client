@@ -91,7 +91,7 @@ export default class AnnoStore extends Component<Props, State> {
             <input
               type="text"
               placeholder="secret"
-              value={secret as string}
+              value={secret ? secret : ""}
               onChange={this.handleSecretChange}
               style={{ width: "440px" }}
             />
@@ -100,7 +100,7 @@ export default class AnnoStore extends Component<Props, State> {
             <input
               type="text"
               placeholder="id"
-              value={id as string}
+              value={id ? id : ""}
               onChange={this.handleIdChange}
               style={{ width: "440px" }}
             />
@@ -118,7 +118,7 @@ export default class AnnoStore extends Component<Props, State> {
               rows={10}
               cols={60}
               onChange={this.handleAnnotationChange}
-              value={annotation as string}
+              value={annotation ? annotation : ""}
             />
           </div>
           <button
