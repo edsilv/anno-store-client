@@ -1,12 +1,45 @@
-import React, { Component } from "react";
+import React, { Component, ErrorInfo } from "react";
+import { QueryType } from "../Enums";
 
-export default class AnnoStoreQuery extends Component {
-  constructor(props) {
+interface Props {
+  annotation: string | null;
+  endpoint: string | null;
+  id: string | null;
+  onQueryResult: (queryResult: string) => void;
+  queryTimestamp: string | null;
+  queryType: QueryType;
+  secret: string | null;
+}
+
+interface State {
+  annotation: string | null;
+  endpoint: string | null;
+  error: string | null;
+  id: string | null;
+  queryResult: string | null;
+  queryTimestamp: string | null;
+  queryType: QueryType;
+  queryUrl: string | null;
+  secret: string | null;
+}
+
+export default class AnnoStoreQuery extends Component<Props, State> {
+  constructor(props: Props) {
     super(props);
-    this.state = {};
+    this.state = {
+      annotation: null,
+      endpoint: null,
+      error: null,
+      id: null,
+      queryResult: null,
+      queryTimestamp: null,
+      queryType: QueryType.NONE,
+      queryUrl: null,
+      secret: null
+    };
   }
 
-  static getDerivedStateFromProps(nextProps, prevState) {
+  static getDerivedStateFromProps(nextProps: Props, prevState: State) {
     // Store prevQuery in state so we can compare when props change.
     // Clear out any previously-loaded result data (so we don't render stale stuff).
     if (nextProps.queryTimestamp !== prevState.queryTimestamp) {
@@ -25,7 +58,7 @@ export default class AnnoStoreQuery extends Component {
     return null;
   }
 
-  static getDerivedStateFromError(error) {
+  static getDerivedStateFromError(error: Error) {
     // Update state so the next render will show the fallback UI.
     return { error: error };
   }
@@ -36,7 +69,7 @@ export default class AnnoStoreQuery extends Component {
     this.queryEndpoint();
   }
 
-  componentDidUpdate(prevProps, prevState) {
+  componentDidUpdate(prevProps: Props, prevState: State) {
     const { error, queryResult } = this.state;
 
     if (error === null && queryResult === null) {
@@ -45,7 +78,7 @@ export default class AnnoStoreQuery extends Component {
     }
   }
 
-  componentDidCatch(error, info) {
+  componentDidCatch(error: Error, info: ErrorInfo) {
     // You can also log the error to an error reporting service
     //console.log(error);
   }
@@ -82,7 +115,7 @@ export default class AnnoStoreQuery extends Component {
     }
   }
 
-  createGETParams(params) {
+  createGETParams(params: string[]) {
     return Object.keys(params).reduce((acc, val) => {
       if (!params[val]) {
         return acc;
@@ -137,7 +170,7 @@ export default class AnnoStoreQuery extends Component {
 
     let data = {
       s: secret,
-      annotation: encodeURIComponent(annotation)
+      annotation: annotation ? encodeURIComponent(annotation) : null
     };
 
     //let url = `${endpoint}${queryType}${this.createGETParams(data)}`;

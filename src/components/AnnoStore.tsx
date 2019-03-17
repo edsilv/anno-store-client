@@ -1,12 +1,31 @@
-import React, { Component } from "react";
+import React, { Component, ChangeEvent } from "react";
 import AnnoStoreQuery from "./AnnoStoreQuery";
 import { QueryType } from "../Enums";
 
-export default class AnnoStore extends Component {
-  constructor(props) {
+interface Props {
+  endpoint: string;
+}
+
+interface State {
+  annotation: string | null;
+  endpoint: string | null;
+  id: string | null;
+  queryResult: string | null;
+  queryTimestamp: string | null;
+  queryType: QueryType;
+  secret: string | null;
+}
+
+export default class AnnoStore extends Component<Props, State> {
+  constructor(props: Props) {
     super(props);
     this.state = {
-      queryType: QueryType.SAVE,
+      endpoint: null,
+      id: null,
+      queryResult: null,
+      queryTimestamp: null,
+      queryType: QueryType.NONE,
+      secret: null,
       annotation: JSON.stringify({
         type: "annotation",
         motivation: "supplementing",
@@ -28,22 +47,26 @@ export default class AnnoStore extends Component {
     this.handleAnnotationChange = this.handleAnnotationChange.bind(this);
   }
 
-  static getDerivedStateFromProps(nextProps, prevState) {
+  static getDerivedStateFromProps(nextProps: Props, prevState: State) {
     return {
       endpoint: nextProps.endpoint
     };
   }
 
-  handleSecretChange(ev) {
-    this.setState({ secret: ev.target.value });
+  handleSecretChange(ev: ChangeEvent<HTMLInputElement>) {
+    this.setState({ secret: ev!.target!.value });
   }
 
-  handleQueryTypeChange(ev) {
-    this.setState({ queryType: ev.target.value });
+  handleQueryTypeChange(ev: ChangeEvent<HTMLSelectElement>) {
+    this.setState({ queryType: ev!.target!.value as QueryType });
   }
 
-  handleAnnotationChange(ev) {
-    this.setState({ annotation: ev.target.value });
+  handleIdChange(ev: ChangeEvent<HTMLInputElement>) {
+    this.setState({ id: ev!.target!.value });
+  }
+
+  handleAnnotationChange(ev: ChangeEvent<HTMLTextAreaElement>) {
+    this.setState({ annotation: ev!.target!.value });
   }
 
   renderDebug() {
@@ -53,12 +76,12 @@ export default class AnnoStore extends Component {
 
   render() {
     const {
+      annotation,
       endpoint,
-      secret,
       id,
-      queryType,
       queryTimestamp,
-      annotation
+      queryType,
+      secret
     } = this.state;
 
     if (endpoint) {
@@ -68,7 +91,7 @@ export default class AnnoStore extends Component {
             <input
               type="text"
               placeholder="secret"
-              value={secret}
+              value={secret as string}
               onChange={this.handleSecretChange}
               style={{ width: "440px" }}
             />
@@ -77,7 +100,7 @@ export default class AnnoStore extends Component {
             <input
               type="text"
               placeholder="id"
-              value={id}
+              value={id as string}
               onChange={this.handleIdChange}
               style={{ width: "440px" }}
             />
@@ -92,16 +115,16 @@ export default class AnnoStore extends Component {
           <div>
             <textarea
               placeholder="anno json"
-              rows="10"
-              cols="60"
+              rows={10}
+              cols={60}
               onChange={this.handleAnnotationChange}
-              value={annotation}
+              value={annotation as string}
             />
           </div>
           <button
             onClick={e =>
               this.setState({
-                queryTimestamp: new Date().getTime()
+                queryTimestamp: String(new Date().getTime())
               })
             }
           >
@@ -109,14 +132,15 @@ export default class AnnoStore extends Component {
           </button>
           {this.renderDebug()}
           <AnnoStoreQuery
+            annotation={annotation}
             endpoint={endpoint}
-            secret={secret}
+            id={id}
             queryTimestamp={queryTimestamp}
             queryType={queryType}
-            annotation={annotation}
-            onQueryResult={r => {
+            secret={secret}
+            onQueryResult={(queryResult: string) => {
               this.setState({
-                queryResult: r
+                queryResult: queryResult
               });
             }}
           />

@@ -11,13 +11,19 @@
   },
   "devDependencies": {
     "@types/react": "16.7.22",
-    "@types/react-dom": "16.0.11"
+    "@types/react-dom": "16.0.11",
+    "typescript": "^3.3.3333"
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "tsc && react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
   },
-  "browserslist": [">0.2%", "not dead", "not ie <= 11", "not op_mini all"]
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ]
 }
